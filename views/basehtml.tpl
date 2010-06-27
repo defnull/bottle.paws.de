@@ -30,8 +30,14 @@
         <li><a target="_blank" href="http://groups.google.de/group/bottlepy">Google Groups</a></li>
         <li><a target="_blank" href="http://twitter.com/bottlepy">Twitter</a></li>
       </ul>
-      <h1>Other</h1>
+      <h1>Like it?</h1>
+      <div>
+        <a href="http://flattr.com/thing/21888/Bottle-A-Python-Web-Framework" target="_blank">
+          <img src="http://api.flattr.com/button/button-compact-static-100x17.png" alt="Flattr this" title="Flattr this" border="0" />
+        </a>
+      </div>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        or paypal:
         <input type="hidden" name="cmd" value="_s-xclick">
         <input type="hidden" name="hosted_button_id" value="10013866">
         <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" width="74" height="21" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
