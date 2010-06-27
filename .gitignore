@@ -1,0 +1,3 @@
+cache/*.html
+bottle.py
+*.pyc
