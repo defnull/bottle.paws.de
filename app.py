@@ -94,6 +94,8 @@ def iter_blogposts():
 def static(filename):
     if not filename:
         bottle.redirect('/docs/0.8/index.html')
+    if not filename[0].isdigit():
+        bottle.redirect('/docs/0.8/' + filename)
     return bottle.static_file(filename, root='./docs/')
 
 # Static files
