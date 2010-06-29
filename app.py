@@ -3,17 +3,20 @@
 from bottle import route, view, response
 import bottle
 import markdown
-import os.path
-import sys
+import os, sys
 import re
 import codecs
 import glob
 import datetime
 import cgi
 
+DOCSDIR = './docs'
+PAGEDIR = './pages'
+CACHEDIR = './cache'
+
 class Page(object):
-    pagedir  = './pages'
-    cachedir = './cache'
+    pagedir  = PAGEDIR
+    cachedir = CACHEDIR
     options = ['codehilite(force_linenos=True)', 'toc']
 
     def __init__(self, name):
@@ -85,18 +88,31 @@ def iter_blogposts():
         if re.match(r'20[0-9]{2}-[0-9]{2}-[0-9]{2}_', name):
             yield Page(name)
 
-
-
+def iter_docs():
+    for f in os.listdir(DOCSDIR):
+        d = os.path.join(DOCSDIR, f)
+        i = os.path.join(d, 'index.html')
+        if os.path.exists(i):
+            yield f
 
 # API docs
 
-@route('/docs/:filename#.*#')
-def static(filename):
+@route('/docs/')
+@view('doclist')
+def doclist():
+    return dict(releases=iter_docs())
+
+@route('/docs/:filename')
+@route('/docs/:version/:filename#.*#')
+def static(filename, version=''):
+    if version not in iter_docs():
+        if version: # old deep link
+            bottle.redirect('/docs/dev/%s/%s' % (version, filename))
+        bottle.redirect('/docs/dev/%s' % filename)
     if not filename:
-        bottle.redirect('/docs/0.8/index.html')
-    if not filename[0].isdigit():
-        bottle.redirect('/docs/0.8/' + filename)
-    return bottle.static_file(filename, root='./docs/')
+        bottle.redirect('/docs/%s/index.html' % version)
+    return bottle.static_file(filename, root='./docs/%s/' % version)
+
 
 # Static files
 
@@ -134,4 +150,6 @@ def bloglist():
     return dict(posts=posts)
 
 # Start server
-bottle.run(host='0.0.0.0', port=int(sys.argv[1] if len(sys.argv) > 1 else 8080))
+if __name__ == '__main__':
+    bottle.debug(len(sys.argv) > 2)
+    bottle.run(host='0.0.0.0', port=int(sys.argv[1] if len(sys.argv) > 1 else 8080))
