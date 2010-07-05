@@ -19,7 +19,7 @@ ssdopts="$ssdopts --chdir `pwd`"
 for n in 0 1 2 3; do
   echo "$n: Killing old instance..."
   pid="/var/run/bottle.$n.pid"
-  kill `cat $pid` &>/dev/null && sleep 2
+  kill `cat $pid` &>/dev/null && sleep 1
   echo "$n: Starting new one..."
   start-stop-daemon --start $ssdopts --pidfile $pid -- "808$n"
 done
