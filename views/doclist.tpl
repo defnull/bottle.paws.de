@@ -7,7 +7,11 @@
 
 <ul>
 %for r in sorted(releases, key=natkey, reverse=True):
-  <li>Release <b>{{r}}</b> - <a href="/docs/{{r}}/">Documentation</a> - <a href="/docs/{{r}}/bottle.py">Snapshot</a></li>
+  <li>Release <b>{{r}}</b>
+      - <a href="/docs/{{r}}/">Documentation</a>
+        (<a href="/docs/{{r}}/bottle-docs-{{r}}.tar.gz">tar.gz</a>)
+        (<a href="/docs/{{r}}/bottle-docs-{{r}}.tar.bz2">tar.bz2</a>)
+      - <a href="/docs/{{r}}/bottle.py">Snapshot</a></li>
 %end
 </ul>
 
