@@ -6,10 +6,12 @@ git checkout master
 git pull
 
 # Build documentation
-./docs/build_docs.sh
+./build_docs.sh release-0.8 0.8
+./build_docs.sh plugins plugins
+./build_docs.sh master dev
 
 # Copy bottle executable
-cp docs/dev/bottle.py .
+cp files/dev/bottle.py .
 
 #config
 ssdopts="--background --startas ./app.py --group www-data --chuid www-data --make-pidfile"
