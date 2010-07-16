@@ -73,9 +73,9 @@ This is not the recommend way (you should use a middleware in front of bottle to
 
 Again, this is not the recommend way to implement subprojects. It is only here because many people asked for this and to show how bottle maps to WSGI.
 
-## How to ignore tailing slashes?
+## How to ignore trailing slashes?
 
-Bottle does not ignore tailing slashes by default. 
+Bottle does not ignore trailing slashes by default. 
 To handle URLs like `/example` and `/example/` the same, 
 you could add two `@route` decorators
 
@@ -90,7 +90,7 @@ or use regular expressions in dynamic routes
     @route('/test/?')
     def test(): pass
 
-or add a WSGI middleware to strips tailing '/' from URLs
+or add a WSGI middleware to strips trailing '/' from URLs
 
     #!Python
     class StripPathMiddleware(object):
