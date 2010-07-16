@@ -5,7 +5,7 @@ Hi, I'm <i>Marcel Hellkamp</i> (aka <i>defnull</i>), author of Bottle and the gu
 <div style='clear:both'></div>
 
 ## About Bottle
-This is my first open source project so far. It started and a small experiment but soon got so much positive feedback I decided to make something real out of it. Here it is.
+This is my first open source project so far. It started as a small experiment but soon got so much positive feedback that I decided to make something real out of it. Here it is.
 
 ## Impressum und Kontaktdaten
 (This is required by [German law](http://bundesrecht.juris.de/tmg/__5.html))
