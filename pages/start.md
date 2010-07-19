@@ -105,12 +105,12 @@ Use these handy helpers for regular tasks.
 As easy as using a `dict()`
 
     #!Python
-    from bottle import request, response
+    from bottle import request, response, route
     
     @route('/hello/cookie')
     def cookie():
         name = request.COOKIES.get('name', 'Stranger')
-        response.header['Content-Type'] = 'text/plain'
+        response.headers['Content-Type'] = 'text/plain'
         return 'Hello, %s' % name
 
     @route('/hello/cookie', method='POST')

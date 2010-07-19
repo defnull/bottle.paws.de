@@ -68,8 +68,8 @@ This is not the recommend way (you should use a middleware in front of bottle to
         def start_response(status, headerlist):
             response.status = int(status.split()[0])
             for key, value in headerlist:
-                response.header.append(key, value) # or .add_header() with bottle < 0.7
-      return app(new_environ, start_response)
+                response.headers.append(key, value) # or .add_header() with bottle < 0.76
+        return app(new_environ, start_response)
 
 Again, this is not the recommend way to implement subprojects. It is only here because many people asked for this and to show how bottle maps to WSGI.
 
