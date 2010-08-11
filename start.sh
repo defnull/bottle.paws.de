@@ -7,7 +7,6 @@ git pull
 
 # Build documentation
 ./build_docs.sh release-0.8 0.8
-./build_docs.sh plugins plugins
 ./build_docs.sh master dev
 
 # Copy bottle executable
