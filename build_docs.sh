@@ -17,7 +17,7 @@ files_root="$root/files"
 echo "  Files root: $files_root"
 bottle_rep="$root/bottle.git"
 echo "  Bottle repository: $bottle_rep"
-archive="$docs_root/$name/bottle-docs-$name"
+archive="$docs_root/$name/bottle-docs"
 echo "  Archive base: $archive"
 
 echo
