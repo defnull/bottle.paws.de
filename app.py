@@ -95,21 +95,31 @@ def iter_docs():
         if os.path.exists(i):
             yield f
 
+
+
+
 # API docs
 
-@route('/docs/')
-@view('doclist')
+# Cool links never change :)
+@route('/api')
+@route('/api/:filename#.*#')
+def api_redirect(filename=''):
+    bottle.redirect('/docs/dev/%s' % filename)
+
 def doclist():
     return dict(releases=iter_docs())
 
+@route('/docs')
+@route('/docs/')
 @route('/docs/:filename')
+@route('/docs/:version/')
 @route('/docs/:version/:filename#.*#')
-def static(filename, version=''):
-    if version not in iter_docs():
-        if version: # old deep link
-            bottle.redirect('/docs/dev/%s/%s' % (version, filename))
+def static(filename='', version=''):
+    if version and version not in iter_docs():
+        bottle.redirect('/docs/dev/%s/%s' % (version, filename))
+    elif not version:
         bottle.redirect('/docs/dev/%s' % filename)
-    if not filename:
+    elif not filename:
         bottle.redirect('/docs/%s/index.html' % version)
     return bottle.static_file(filename, root='./docs/%s/' % version)
 
@@ -119,6 +129,10 @@ def static(filename, version=''):
 @route('/:filename#.+\.(css|js|ico|png|txt|html)#')
 def static(filename):
     return bottle.static_file(filename, root='./static/')
+
+
+
+
 
 # Bottle Pages
 
@@ -149,7 +163,10 @@ def bloglist():
     posts.sort(key=lambda x: x.blogtime, reverse=True)
     return dict(posts=posts)
 
+
 # Start server
 if __name__ == '__main__':
-    bottle.debug(len(sys.argv) > 2)
-    bottle.run(host='0.0.0.0', port=int(sys.argv[1] if len(sys.argv) > 1 else 8080))
+    bottle.debug('debug' in sys.argv)
+    reload = 'reload' in sys.argv
+    port = int(sys.argv[1] if len(sys.argv) > 1 else 8080)
+    bottle.run(host='0.0.0.0', port=port, reloader=reload)
