@@ -18,9 +18,11 @@
   Release: <b>bottle-{{name}}</b>
   <ul>
     <li><a href="/docs/{{r}}/">Documentation</a> (download as
-        <a href="/docs/{{r}}/bottle-docs-{{r}}.tar.gz">tar.gz</a> or
-        <a href="/docs/{{r}}/bottle-docs-{{r}}.tar.bz2">tar.bz2</a>)</li>
+        <a href="/docs/{{r}}/bottle-docs-{{r}}.tar.gz">tar.gz</a>,
+        <a href="/docs/{{r}}/bottle-docs-{{r}}.tar.bz2">tar.bz2</a> or
+        <a href="/docs/{{r}}/bottle-docs-{{r}}.zip">zip</a>)</li>
     <li><a href="/docs/{{r}}/changelog.html">Changelog</a></li>
+    <li>Download <a href="/docs/{{r}}/bottle.py">bottle.py</a></li>
   </ul>
 %end
 
