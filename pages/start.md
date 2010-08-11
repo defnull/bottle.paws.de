@@ -152,7 +152,8 @@ Bottle does **not** include (yet):
 > As you can see, there was practically no difference in speed between Bottle and pure WSGI in a basic “hello world” test. Even with the addition of Mako and SQLAlchemy, Bottle performed significantly faster than a bare Pylons or Django setup. On a side note, adding a sample template using Bottle’s default templating package didn’t seem to change these numbers at all.
 
 ## Projects using Bottle
-
+  * [nzo.shoota.org](http://nzo.shoota.org/) is a mini meteo/rss application viewer with Bottle and jquery.
+  * [pyaler](http://www.pyaler.org/) provides a facility enabling HTTP querying of [Arduinos](http://arduino.cc/).
   * [whatismyencoding.com](http://whatismyencoding.com/) guesses the encoding of an URL or string.
   * [nagios4iphone](http://damien.degois.info/projects/nagios4iphone/) A Nagios interface for iPhone without touching anything on your nagios servers.
   * [flugzeit-rechner.de](http://www.flugzeit-rechner.de/) runs on Bottle and Jinja2.
