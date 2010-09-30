@@ -97,23 +97,22 @@ def iter_docs():
 
 
 
+app = bottle.Bottle()
 
 # API docs
 
 # Cool links never change :)
-@route('/api')
-@route('/api/:filename#.*#')
+@app.get('/api')
+@app.get('/api/:filename#.*#')
 def api_redirect(filename=''):
     bottle.redirect('/docs/dev/%s' % filename)
 
-def doclist():
-    return dict(releases=iter_docs())
-
-@route('/docs')
-@route('/docs/')
-@route('/docs/:filename')
-@route('/docs/:version/')
-@route('/docs/:version/:filename#.*#')
+@app.get('/')
+@app.get('/docs')
+@app.get('/docs/')
+@app.get('/docs/:filename')
+@app.get('/docs/:version/')
+@app.get('/docs/:version/:filename#.*#')
 def static(filename='', version=''):
     if version and version not in iter_docs():
         bottle.redirect('/docs/dev/%s/%s' % (version, filename))
@@ -124,21 +123,19 @@ def static(filename='', version=''):
     return bottle.static_file(filename, root='./docs/%s/' % version)
 
 
+
+
 # Static files
 
-@route('/:filename#.+\.(css|js|ico|png|txt|html)#')
+@app.get('/:filename#.+\.(css|js|ico|png|txt|html)#')
 def static(filename):
     return bottle.static_file(filename, root='./static/')
 
 
 
-
-
 # Bottle Pages
 
-@route('/')
-@route('/page/:name')
-@view('page')
+@app.get('/page/:name', template='page')
 def page(name='start'):
     p = Page(name) #replace('/','_')? Routes don't match '/' so this is save
     if p.exists:
@@ -147,8 +144,7 @@ def page(name='start'):
         raise bottle.HTTPError(404, 'Page not found') # raise to escape the view...
 
 
-@route('/rss.xml')
-@view('rss')
+@app.get('/rss.xml', template='rss')
 def blogrss():
     response.content_type = 'xml/rss'
     posts = [post for post in iter_blogposts() if post.exists and post.is_blogpost]
@@ -156,7 +152,7 @@ def blogrss():
     return dict(posts=posts)
 
 
-@route('/blog')
+@app.get('/blog')
 @view('blogposts')
 def bloglist():
     posts = [post for post in iter_blogposts() if post.exists and post.is_blogpost]
@@ -169,4 +165,4 @@ if __name__ == '__main__':
     bottle.debug('debug' in sys.argv)
     reload = 'reload' in sys.argv
     port = int(sys.argv[1] if len(sys.argv) > 1 else 8080)
-    bottle.run(host='0.0.0.0', port=port, reloader=reload)
+    bottle.run(app, host='0.0.0.0', port=port, reloader=reload)
