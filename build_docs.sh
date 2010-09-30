@@ -36,22 +36,22 @@ release=`PYTHONPATH="build/lib" python -c "import bottle;print bottle.__version_
 echo "  Release is: Bottle-$release"
 
 echo
-echo "Build documentation (HTML)..."
+echo "Sphinx run..."
 cd "$bottle_rep/apidoc" || cd "$bottle_rep/docs"
 rm -rf html sphinx/build/*
-make html &>build.log || echo "  Sphinx build failed."
+
+echo "Build documentation (HTML)..."
+make html &>build-html.log || echo "  Sphinx html build failed."
 rm -rf "$docs_root/$name" &> /dev/null
 cp -a html "$docs_root/$name"
 
-#echo
-#echo "Build documentation (PDF)..."
-#cd "$bottle_rep/apidoc" || cd "$bottle_rep/docs"
-#rm -rf html sphinx/build/*
-#make latex &>build.log || echo "  Sphinx build failed."
-#cd sphinx/build/latex
-#make all-pdf
-#echo "  $archive.pdf"
-#cp Bottle.pdf "$archive.pdf"
+echo "Build documentation (PDF)..."
+make latex &>build-latex.log || echo "  Sphinx latex build failed."
+cd sphinx/build/latex
+make all-pdf &>build-pdf.log || echo "  Sphinx pdf build failed."
+echo "  PDF: $docs_root/$name/bottle-docs.pdf"
+cp Bottle.pdf "$docs_root/$name/bottle-docs.pdf"
+cd ../../../
 
 echo
 echo "Make file downloads..."
@@ -62,7 +62,7 @@ echo "  $archive.tar.bz2"
 tar -cjf "$archive.tar.bz2" -C "$bottle_rep/apidoc" html
 echo "  $archive.zip"
 (cd "$bottle_rep/apidoc"; zip -q -r -9 "$archive.zip" html)
-echo "  $docs_root/$name/$release.tar.gz"
+echo "  $docs_root/$name/bottle-$release.tar.gz"
 cp "$bottle_rep/dist/bottle-$release.tar.gz" "$docs_root/$name/"
 echo "  $docs_root/$name/bottle.py"
 cp "$bottle_rep/build/lib/bottle.py" "$docs_root/$name/"
