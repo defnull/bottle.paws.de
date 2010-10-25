@@ -10,7 +10,7 @@ git pull
 ./build_docs.sh master dev
 
 # Copy bottle executable
-cp files/dev/bottle.py .
+cp docs/dev/bottle.py .
 
 #config
 ssdopts="--background --startas ./app.py --group www-data --chuid www-data --make-pidfile"
