@@ -132,6 +132,13 @@ def static(filename):
     return bottle.static_file(filename, root='./static/')
 
 
+# Git commit redirect
+
+@app.get('/commit/:hash#[a-zA-Z0-9]+#')
+def commit(hash):
+    url = 'https://github.com/defnull/bottle/commit/%s'
+    bottle.redirect(url % hash.lower())
+
 
 # Bottle Pages
 
