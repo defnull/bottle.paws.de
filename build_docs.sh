@@ -38,30 +38,26 @@ echo "  Release is: Bottle-$release"
 echo
 echo "Sphinx run..."
 cd "$bottle_rep/apidoc" || cd "$bottle_rep/docs"
-rm -rf html sphinx/build/*
+rm -rf /tmp/sphinx
 
 echo "Build documentation (HTML)..."
-make html &>build-html.log || echo "  Sphinx html build failed."
-rm -rf "$docs_root/$name" &> /dev/null
-cp -a html "$docs_root/$name"
+sphinx-build -b html -c sphinx -d /tmp/sphinx/doctree . /tmp/sphinx/html 2>/dev/null | sed 's/^/  /'
+cp -a /tmp/sphinx/html "$docs_root/$name"
 
 echo "Build documentation (PDF)..."
-make latex &>build-latex.log || echo "  Sphinx latex build failed."
-cd sphinx/build/latex
-make all-pdf &>build-pdf.log || echo "  Sphinx pdf build failed."
-echo "  PDF: $docs_root/$name/bottle-docs.pdf"
-cp Bottle.pdf "$docs_root/$name/bottle-docs.pdf"
-cd ../../../
+sphinx-build -b latex -c sphinx -d /tmp/sphinx/doctree -D latex_paper_size=a4 . /tmp/sphinx/latex 2>/dev/null | sed 's/^/  /'
+make -C /tmp/sphinx/latex all-pdf &>/dev/null | sed 's/^/  /'
+cp /tmp/sphinx/latex/Bottle.pdf "$docs_root/$name/bottle-docs.pdf"
+echo "  PDF: $_"
 
 echo
 echo "Make file downloads..."
-cd "$bottle_rep/apidoc" || cd "$bottle_rep/docs"
 echo "  $archive.tar.gz"
-tar -czf "$archive.tar.gz" -C "$bottle_rep/apidoc" html
+tar -czf "$archive.tar.gz" -C /tmp/sphinx html
 echo "  $archive.tar.bz2"
-tar -cjf "$archive.tar.bz2" -C "$bottle_rep/apidoc" html
+tar -cjf "$archive.tar.bz2" -C /tmp/sphinx html
 echo "  $archive.zip"
-(cd "$bottle_rep/apidoc"; zip -q -r -9 "$archive.zip" html)
+(cd /tmp/sphinx; zip -q -r -9 "$archive.zip" html)
 echo "  $docs_root/$name/bottle-$release.tar.gz"
 cp "$bottle_rep/dist/bottle-$release.tar.gz" "$docs_root/$name/"
 echo "  $docs_root/$name/bottle.py"
@@ -71,7 +67,8 @@ cp "$bottle_rep/build/lib/bottle.py" "$docs_root/$name/"
 echo
 echo "Cleaning up..."
 echo "  Sphinx builds..."
-rm -rf "$bottle_rep/apidoc/html"
+rm -rf /tmp/sphinx
 echo "  Bottle builds..."
 rm -rf "$bottle_rep/build"
+rm -rf "$bottle_rep/dist"
 
