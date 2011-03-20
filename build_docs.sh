@@ -1,74 +1,39 @@
+#!/bin/bash
+
 if test $# -ne 2; then
-  echo "Usage: $0 branch-name folder-name"
+  echo "Usage: $0 branch folder"
   echo "Example: $0 master dev"
   exit 0
 fi
 
+root=`dirname $0`
+rep='/tmp/update_docs_bottle.git'
+dst="$root/docs/$2"
 branch=$1
-name=$2
 
-echo
-echo "Setup..."
-cd `dirname $0`
-root=`pwd`
-docs_root="$root/docs"
-echo "  Docs root: $docs_root"
-files_root="$root/files"
-echo "  Files root: $files_root"
-bottle_rep="$root/bottle.git"
-echo "  Bottle repository: $bottle_rep"
-archive="$docs_root/$name/bottle-docs"
-echo "  Archive base: $archive"
+test -d $rep || git clone git://github.com/defnull/bottle.git $rep
+cd $rep
+git fetch origin
+git checkout -b temp "origin/$branch"
+git clean -d -x -f
 
-echo
-echo "Update repository and checkout branch..."
-test -d $bottle_rep || git clone git://github.com/defnull/bottle.git $bottle_rep | sed "s/^/  /"
-cd $bottle_rep
-git fetch origin | sed "s/^/  /"
-git checkout "origin/$branch" 2>&1 | sed "s/^/  /"
-git clean -d -f | sed "s/^/  /"
+test -f docs/index.rst && cd docs || cd apidoc
+make html && make latex
+cd ../build/docs
 
-echo
-echo "Build bottle.py..."
-cd $bottle_rep
-python setup.py build sdist | sed "s/^/  /"
-release=`PYTHONPATH="build/lib" python -c "import bottle;print bottle.__version__"`
-echo "  Release is: Bottle-$release"
+cd latex
+make all-pdf > /dev/null
+cd ..
 
-echo
-echo "Sphinx run..."
-cd "$bottle_rep/apidoc" || cd "$bottle_rep/docs"
-rm -rf /tmp/sphinx
+tar -czf bottle-docs.tar.gz html
+tar -cjf bottle-docs.tar.bz2 html
+zip -q -r -9 bottle-docs.zip html
+cp bottle-docs.tar.gz bottle-docs.tar.bz2 bottle-docs.zip html
 
-echo "Build documentation (HTML)..."
-sphinx-build -b html -c sphinx -d /tmp/sphinx/doctree . /tmp/sphinx/html 2>/dev/null | sed 's/^/  /'
-cp -a /tmp/sphinx/html "$docs_root/$name"
+rsync -vrc html/ $dst
 
-echo "Build documentation (PDF)..."
-sphinx-build -b latex -c sphinx -d /tmp/sphinx/doctree -D latex_paper_size=a4 . /tmp/sphinx/latex 2>/dev/null | sed 's/^/  /'
-make -C /tmp/sphinx/latex all-pdf &>/dev/null | sed 's/^/  /'
-cp /tmp/sphinx/latex/Bottle.pdf "$docs_root/$name/bottle-docs.pdf"
-echo "  PDF: $_"
-
-echo
-echo "Make file downloads..."
-echo "  $archive.tar.gz"
-tar -czf "$archive.tar.gz" -C /tmp/sphinx html
-echo "  $archive.tar.bz2"
-tar -cjf "$archive.tar.bz2" -C /tmp/sphinx html
-echo "  $archive.zip"
-(cd /tmp/sphinx; zip -q -r -9 "$archive.zip" html)
-echo "  $docs_root/$name/bottle-$release.tar.gz"
-cp "$bottle_rep/dist/bottle-$release.tar.gz" "$docs_root/$name/"
-echo "  $docs_root/$name/bottle.py"
-cp "$bottle_rep/build/lib/bottle.py" "$docs_root/$name/"
-
-
-echo
-echo "Cleaning up..."
-echo "  Sphinx builds..."
-rm -rf /tmp/sphinx
-echo "  Bottle builds..."
-rm -rf "$bottle_rep/build"
-rm -rf "$bottle_rep/dist"
+cd $rep
+git checkout master
+git branch -D temp
+git clean -d -x -f
 

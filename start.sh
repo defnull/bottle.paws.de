@@ -5,12 +5,8 @@ cd `dirname $0`
 git checkout master
 git pull
 
-# Build documentation
-./build_docs.sh release-0.8 0.8
-./build_docs.sh master dev
-
 # Copy bottle executable
-cp docs/dev/bottle.py .
+wget https://github.com/defnull/bottle/raw/master/bottle.py
 
 #config
 ssdopts="--background --startas ./app.py --group www-data --chuid www-data --make-pidfile"
