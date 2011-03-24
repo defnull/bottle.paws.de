@@ -6,7 +6,8 @@ git checkout master
 git pull
 
 # Copy bottle executable
-wget https://github.com/defnull/bottle/raw/master/bottle.py
+rm bottle.py
+wget --no-check-certificate https://github.com/defnull/bottle/raw/master/bottle.py
 
 #config
 ssdopts="--background --startas ./app.py --group www-data --chuid www-data --make-pidfile"
