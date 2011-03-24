@@ -99,6 +99,10 @@ def iter_docs():
 
 app = bottle.Bottle()
 
+@app.get('/bottle.py')
+def bottle_download():
+    bottle.redirect('https://github.com/defnull/bottle/raw/master/bottle.py')
+
 # API docs
 
 # Cool links never change :)
