@@ -6,9 +6,8 @@ if test $# -ne 2; then
   exit 0
 fi
 
-root=`dirname $0`
 rep='/tmp/update_docs_bottle.git'
-dst="$root/docs/$2"
+dst="/var/www/bottle/docs/$2"
 branch=$1
 
 test -d $rep || git clone git://github.com/defnull/bottle.git $rep
@@ -25,10 +24,11 @@ cd latex
 make all-pdf > /dev/null
 cd ..
 
+cp latex/Bottle.pdf bottle-docs.pdf
 tar -czf bottle-docs.tar.gz html
 tar -cjf bottle-docs.tar.bz2 html
 zip -q -r -9 bottle-docs.zip html
-cp bottle-docs.tar.gz bottle-docs.tar.bz2 bottle-docs.zip html
+cp bottle-docs.* html
 
 rsync -vrc html/ $dst
 
