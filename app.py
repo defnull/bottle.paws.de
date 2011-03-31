@@ -9,6 +9,7 @@ import codecs
 import glob
 import datetime
 import cgi
+import functools
 
 DOCSDIR = './docs'
 PAGEDIR = './pages'
@@ -102,6 +103,21 @@ app = bottle.Bottle()
 @app.get('/bottle.py')
 def bottle_download():
     bottle.redirect('https://github.com/defnull/bottle/raw/master/bottle.py')
+
+redirects = dict(line.split() for line in '''
+/page/start    /docs/dev/index.html
+/page/docs     /docs/dev/tutorial.html
+/page/tutorial /docs/dev/tutorial_app.html
+/test/:foo     /%(foo)s
+'''.strip().splitlines())
+
+for url, target in redirects.items():
+    def cb(target, **vars):
+        bottle.redirect(target % vars)
+    tmp = functools.partial(cb, target)
+    functools.update_wrapper(tmp, cb)
+    app.get(url, callback=tmp)
+
 
 # API docs
 
