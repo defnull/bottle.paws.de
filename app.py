@@ -100,57 +100,38 @@ def iter_docs():
 
 app = bottle.Bottle()
 
-@app.get('/bottle.py')
-def bottle_download():
-    bottle.redirect('https://github.com/defnull/bottle/raw/master/bottle.py')
 
-redirects = dict(line.split() for line in '''
-/page/start    /docs/dev/index.html
-/page/docs     /docs/dev/tutorial.html
-/page/tutorial /docs/dev/tutorial_app.html
-/test/:foo     /%(foo)s
-'''.strip().splitlines())
+# Permanent redirects (303)
 
-for url, target in redirects.items():
-    def cb(target, **vars):
-        bottle.redirect(target % vars)
-    tmp = functools.partial(cb, target)
-    functools.update_wrapper(tmp, cb)
+redirects = '''
+/page/start     /docs/dev/index.html
+/page/docs      /docs/dev/tutorial.html
+/page/tutorial  /docs/dev/tutorial_app.html
+/api            /docs/dev/
+/api/:fname#.*# /docs/dev/%(fname)s
+/               /docs/dev/
+/docs           /docs/dev/
+/docs/          /docs/dev/
+/docs/:ver      /docs/%(ver)s/
+'''.strip()
+
+def rdcb(target, **vars):
+    bottle.redirect(target % vars)
+
+for line in redirects.splitlines():
+    url, target = line.split()
+    tmp = functools.partial(rdcb, target)
+    functools.update_wrapper(tmp, rdcb)
     app.get(url, callback=tmp)
 
 
-# API docs
+# Static API docs
 
-# Cool links never change :)
-@app.get('/api')
-@app.get('/api/:filename#.*#')
-def api_redirect(filename=''):
-    bottle.redirect('/docs/dev/%s' % filename)
-
-@app.get('/')
-@app.get('/docs')
-@app.get('/docs/')
-@app.get('/docs/:filename')
 @app.get('/docs/:version/')
-@app.get('/docs/:version/:filename#.*#')
-def static(filename='', version=''):
-    if version and version not in iter_docs():
-        bottle.redirect('/docs/dev/%s/%s' % (version, filename))
-    elif not version:
-        bottle.redirect('/docs/dev/%s' % filename)
-    elif not filename:
-        bottle.redirect('/docs/%s/index.html' % version)
+@app.get('/docs/:version/:filename#.+#')
+def static(version, filename='index.html'):
+    if version not in iter_docs(): bottle.redirect('/')
     return bottle.static_file(filename, root='./docs/%s/' % version)
-
-
-
-
-# Static files
-
-@app.get('/:filename#.+\.(css|js|ico|png|txt|html)#')
-def static(filename):
-    return bottle.static_file(filename, root='./static/')
-
 
 # Git commit redirect
 
@@ -159,17 +140,20 @@ def commit(hash):
     url = 'https://github.com/defnull/bottle/commit/%s'
     bottle.redirect(url % hash.lower())
 
+# bottle.py redirect
 
-# Bottle Pages
+@app.get('/bottle.py')
+def download():
+    url = 'https://github.com/defnull/bottle/raw/master/bottle.py'
+    bottle.redirect(url)
 
-@app.get('/page/:name', template='page')
-def page(name='start'):
-    p = Page(name) #replace('/','_')? Routes don't match '/' so this is save
-    if p.exists:
-        return dict(page=p)
-    else:
-        raise bottle.HTTPError(404, 'Page not found') # raise to escape the view...
+# Other static files
 
+@app.get('/:filename#.+\.(css|js|ico|png|txt|html)#')
+def static(filename):
+    return bottle.static_file(filename, root='./static/')
+
+# RSS feed
 
 @app.get('/rss.xml', template='rss')
 def blogrss():
@@ -178,6 +162,7 @@ def blogrss():
     posts.sort(key=lambda x: x.blogtime, reverse=True)
     return dict(posts=posts)
 
+# Old stuff: Blog posts and markdown pages...
 
 @app.get('/blog')
 @view('blogposts')
@@ -186,6 +171,13 @@ def bloglist():
     posts.sort(key=lambda x: x.blogtime, reverse=True)
     return dict(posts=posts)
 
+@app.get('/page/:name', template='page')
+def page(name='start'):
+    p = Page(name) #replace('/','_')? Routes don't match '/' so this is save
+    if p.exists:
+        return dict(page=p)
+    else:
+        raise bottle.HTTPError(404, 'Page not found') # raise to escape the view...
 
 # Start server
 if __name__ == '__main__':
