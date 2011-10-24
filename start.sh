@@ -16,9 +16,9 @@ wget -O bottle.py --no-check-certificate https://github.com/defnull/bottle/raw/m
 for n in 0 1 2 3; do
   pidfile="/var/run/bottlepy.$n.pid"
   echo "$n: Killing old instance..."
-  start-stop-daemon --stop  --pidfile $pidfile --group www-data --chuid www-data
+  /sbin/start-stop-daemon --stop  --pidfile $pidfile --group www-data --chuid www-data
   echo "$n: Starting new instance..."
-  start-stop-daemon --start --background --startas ./app.py \
+  /sbin/start-stop-daemon --start --background --startas ./app.py \
                             --group www-data --chuid www-data --chdir `pwd` \
                             --make-pidfile --pidfile $pidfile -- "808$n"
 done
