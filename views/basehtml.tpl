@@ -26,7 +26,7 @@
         <li><a target="_blank" href="http://pypi.python.org/pypi/bottle">Download</a></li>
         <li><a target="_blank" href="http://github.com/defnull/bottle">GitHub Repository</a></li>
         <li><a target="_blank" href="http://github.com/defnull/bottle/issues">Issue Tracker</a></li>
-        <li><a target="_blank" href="http://groups.google.de/group/bottlepy">Google Groups</a></li>
+        <li><a target="_blank" href="http://groups.google.com/group/bottlepy">Google Groups</a></li>
         <li><a target="_blank" href="http://twitter.com/bottlepy">Twitter</a></li>
       </ul>
       <h1>Like it?</h1>
