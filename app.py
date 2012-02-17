@@ -98,7 +98,7 @@ def iter_docs():
 
 
 
-app = bottle.Bottle()
+application = app = bottle.Bottle()
 
 
 # Permanent redirects (303)
