@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if test $# -ne 2; then
   echo "Usage: $0 branch folder"
@@ -6,12 +7,15 @@ if test $# -ne 2; then
   exit 0
 fi
 
+root=$(dirname $(readlink -f "$0"))
 rep='/tmp/update_docs_bottle.git'
-dst="/var/www/bottle/docs/$2"
+dst="$root/docs/$2"
 branch=$1
 
 test -d $rep || git clone git://github.com/defnull/bottle.git $rep
 cd $rep
+git checkout master
+git branch | grep temp && git branch -D temp
 git fetch origin
 git checkout -b temp "origin/$branch"
 git clean -d -x -f
