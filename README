@@ -2,7 +2,7 @@ Setup::
 
     aptitude install python-setuptools
     easy_install pip
-    pip install -U sphinx
+    pip install -U sphinx markdown
     aptitude install texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
     ./build_docs.sh master dev
     ./build_docs.sh release-0.10 0.10
